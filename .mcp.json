@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sentinel": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "sentinel", "mcp-serve", "--transport", "stdio"],
+      "cwd": "/Users/aserdargun/Projects/sentinel",
+      "disabled": true
+    }
+  }
+}
