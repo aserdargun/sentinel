@@ -1,0 +1,852 @@
+{
+  "1d18d9e4-1cbb-4fd7-9dd5-8e9e06fe6eab": {
+    "original_name": "tmpqqcxogbm.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.266950+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "04b1fedf-0017-41dd-9b77-84ab066e107a": {
+    "original_name": "tmpb2ty0uxc.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.282854+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "553dd33d-0bb6-47d3-9c90-1533251e7b20": {
+    "original_name": "tmpq2x21wud.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.295375+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "7b002a19-37c0-4edd-8be4-1014ebf160d8": {
+    "original_name": "tmplrkbc68l.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.307322+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "50d3f394-fa5a-4707-8dfa-71bfaa441214": {
+    "original_name": "tmpv0mwc3s8.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.316984+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "ab566a28-0939-455a-9aba-03e527b3e785": {
+    "original_name": "tmpjf_run6l.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.346264+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "5f9c45b8-fba3-4000-8113-eab846dc38ae": {
+    "original_name": "tmp1mf5mbto.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.356726+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "22dfedb5-88f5-4528-9eff-b806fcc6a4ea": {
+    "original_name": "tmppgh_m3xd.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.382802+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "e2465e3e-02b5-4b67-8d66-14a08c76bf34": {
+    "original_name": "tmpfi_1nchy.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.394211+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "24465683-1a6c-4ceb-bad4-66fbd84bfe06": {
+    "original_name": "tmpd6_8lol7.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:43.404819+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "6c6a8386-2591-46cb-bc50-43752acc6e13": {
+    "original_name": "tmposg5dnu7.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.836609+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "a24853cb-6fd9-475b-9abe-bdf627a83b27": {
+    "original_name": "tmpw11115ut.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.847260+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "e26a66cb-d15a-4cda-9189-8d4526681066": {
+    "original_name": "tmp8az33fdg.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.857170+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "8ede6a4d-a82e-4512-a394-d425ce3d7a5d": {
+    "original_name": "tmp9xf7tu8v.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.909997+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "a01a778f-2d67-43d4-85cb-90e3bc3203d8": {
+    "original_name": "tmpqvml5use.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.919993+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "d4a5663a-60ff-461c-89fe-fd7b0073a3f0": {
+    "original_name": "tmpp3tqij6t.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.948935+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "1003a999-1ca1-448b-a7dd-c73bdb6e5fcc": {
+    "original_name": "tmp7cspxlof.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.958568+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "18850b9a-a309-45b7-b203-25f41f408208": {
+    "original_name": "tmp785yj54b.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.970044+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "ef7c1b46-ab99-48a3-b9eb-573a49ad0f05": {
+    "original_name": "tmpmvreywqx.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.980226+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "17923b0c-069a-40b2-8fe0-6ce38aeef6e4": {
+    "original_name": "tmp3hge8eit.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:46.991478+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "18636027-1e28-4a89-81d7-ffbc11460e74": {
+    "original_name": "tmplzb8m7gz.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.095599+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "d94223cb-f5cd-417c-be6e-89bdaa57aa29": {
+    "original_name": "tmprlrh2uoh.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.106002+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "c8a4a10c-25ae-4a04-9d3e-844b870d7cdf": {
+    "original_name": "tmpw3rosqpa.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.116340+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "5a3a6842-e975-4958-bf6a-f460e8ac7eff": {
+    "original_name": "tmp_mi9p9ur.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.126586+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "75beb284-dea1-4d58-8596-4600f4c2a9a5": {
+    "original_name": "tmp10emtrfm.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.136557+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "3f72c38b-e0ab-416e-b43c-c5e45ee29f1d": {
+    "original_name": "tmpjct1oaha.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.165112+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "93e43543-33ef-4df2-9d95-2af15af08daf": {
+    "original_name": "tmpo1yo1pis.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.174663+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "8ba1bd5f-34b6-4248-b528-3ce8fe31a420": {
+    "original_name": "tmpuov4zjvi.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.186591+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "28fddab5-7ab4-4e4d-ba3f-d8413fdee9a5": {
+    "original_name": "tmpxs3lo89e.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.197620+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "32ee7d88-47d7-4309-8a15-d8d227c15684": {
+    "original_name": "tmp1owkf3j3.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:10:54.208343+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "bedc26b2-847f-4b89-8c6b-a5d349960ca9": {
+    "original_name": "tmpp_t_bdkf.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.133795+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "55296621-8b4b-4de8-8d63-bc47a580d5bd": {
+    "original_name": "tmpobl7szlk.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.146042+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "15003242-dbab-4eb1-a980-21a75aa6caef": {
+    "original_name": "tmp2zvpsl16.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.157770+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "48dde519-0568-4ae9-a236-23c251219191": {
+    "original_name": "tmpxp3j65e4.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.170102+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "55ab1364-6525-45d8-bbae-96040182e7b0": {
+    "original_name": "tmpr56j9tc4.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.181561+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "21e8ce1d-abf0-45ae-af0c-d193666bbc12": {
+    "original_name": "tmp1xb6nvzw.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.212590+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "a3321ed0-36f5-41ae-9f55-94e8e6cd21e2": {
+    "original_name": "tmp_njpyx5p.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.224255+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "226b2488-e2c1-4f36-98cc-177c7ad6c153": {
+    "original_name": "tmpn10008e9.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.237083+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "a791d040-04ed-4461-98a0-f899a1532977": {
+    "original_name": "tmplw_2nlb9.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.248728+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "3305b07a-4abf-4f8c-b0cf-d1ceea66fa3c": {
+    "original_name": "tmpdqx75hb9.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:01.260567+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "a2198bf1-ddfe-4987-9e1a-918343c4b093": {
+    "original_name": "tmpppghqsmv.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.631885+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "6c4e47d5-821a-416c-8f84-633f049bbb67": {
+    "original_name": "tmp8mei68vp.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.643492+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "0500e67b-7ac7-43a4-8ff3-defe12e0fd13": {
+    "original_name": "tmpyh3n68lv.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.653862+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "e651003e-11dd-4e3b-abef-a160d8f3ab2d": {
+    "original_name": "tmp19o3c0d2.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.664588+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "3a40045c-39f7-4cfc-9d7b-5f3295596aed": {
+    "original_name": "tmp1916ht_j.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.674551+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "ae77d776-2960-4614-97d9-40327b8caa8f": {
+    "original_name": "tmp4qwzjt5p.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.702301+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "fd1c910c-bec2-448c-9e08-fae6ab3fd073": {
+    "original_name": "tmpf4bb6kj_.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.713188+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "0dae04f1-220e-4625-a206-641af5cb6139": {
+    "original_name": "tmp0uabbs_l.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.725000+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "6139e316-55a7-4042-b4e7-836ccb5e4a15": {
+    "original_name": "tmppirlhjcg.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.735316+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  },
+  "b0eba63c-077d-4e22-9a36-fc42590a69b7": {
+    "original_name": "tmp5cl8l_b5.csv",
+    "source": "file",
+    "uploaded_at": "2026-03-27T18:11:49.745709+00:00",
+    "shape": [
+      20,
+      3
+    ],
+    "feature_names": [
+      "feature_1",
+      "feature_2"
+    ],
+    "time_range": {
+      "start": "2024-01-01 00:00:00+00:00",
+      "end": "2024-01-20 00:00:00+00:00"
+    }
+  }
+}
