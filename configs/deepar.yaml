@@ -1,0 +1,24 @@
+# DeepAR autoregressive probabilistic anomaly detector configuration.
+#
+# Autoregressive LSTM that outputs Gaussian N(mu, sigma^2) per step per
+# feature. The anomaly score is the per-step NLL summed over features.
+# Inference uses single-step rolling forecast (no sampling).
+#
+# Reference: Salinas et al., "DeepAR: Probabilistic Forecasting with
+# Autoregressive Recurrent Networks", 2020.
+
+inherits: base.yaml
+model: deepar
+
+# LSTM architecture
+hidden_dim: 64        # Hidden state dimension per LSTM layer
+num_layers: 2         # Number of stacked LSTM layers
+dropout: 0.1          # Dropout between LSTM layers (disabled when num_layers==1)
+
+# Sequence / windowing
+seq_len: 50           # Input window length (number of conditioning timesteps)
+
+# Training
+learning_rate: 0.001  # Adam optimizer learning rate
+epochs: 100           # Number of training epochs
+batch_size: 32        # Mini-batch size

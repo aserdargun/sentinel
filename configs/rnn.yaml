@@ -1,0 +1,21 @@
+# Elman RNN reconstruction configuration.
+#
+# Sequence-to-sequence reconstruction: the RNN reads a window of `seq_len`
+# timesteps and reconstructs the same window. Anomaly score = MSE between
+# the input and reconstructed sequence.
+
+inherits: base.yaml
+model: rnn
+
+# RNN architecture
+hidden_dim: 64        # Hidden state dimension per RNN layer
+num_layers: 2         # Number of stacked Elman RNN layers
+dropout: 0.1          # Dropout between RNN layers (disabled when num_layers==1)
+
+# Sequence / windowing
+seq_len: 50           # Input window length (number of timesteps fed to the RNN)
+
+# Training
+learning_rate: 0.001  # Adam optimizer learning rate
+epochs: 100           # Number of training epochs
+batch_size: 32        # Mini-batch size

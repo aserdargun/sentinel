@@ -23,6 +23,16 @@ if _HAS_TORCH:
         pass
 
     try:
+        from sentinel.models.deep import rnn  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
+        from sentinel.models.deep import gru  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
         from sentinel.models.deep import lstm_ae  # noqa: F401
     except ImportError:
         pass
@@ -43,6 +53,21 @@ if _HAS_TORCH:
         pass
 
     try:
+        from sentinel.models.deep import tadgan  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
+        from sentinel.models.deep import deepar  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
         from sentinel.models.deep import diffusion  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
+        from sentinel.models.deep import gan  # noqa: F401
     except ImportError:
         pass

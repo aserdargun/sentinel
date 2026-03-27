@@ -6,3 +6,5 @@ try:
     from sentinel.models import deep  # noqa: F401
 except ImportError:
     pass
+
+from sentinel.models import ensemble  # noqa: F401

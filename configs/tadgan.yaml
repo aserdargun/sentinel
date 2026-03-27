@@ -1,0 +1,54 @@
+# TadGAN Anomaly Detector Configuration (Geiger et al., 2020)
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: tadgan
+
+# LSTM hidden dimension for both the encoder and generator networks.
+# Larger values increase model capacity but also training time and memory.
+hidden_dim: 64
+
+# Dimensionality of the latent space. The encoder compresses each sequence
+# into a vector of this size. Smaller values enforce a tighter bottleneck.
+# Typical range: 8 to 32.
+latent_dim: 16
+
+# Sliding-window length for sequence input. Longer windows capture more
+# temporal context but require more data and memory. Must be <= n_samples.
+seq_len: 50
+
+# Cycle-consistency loss weight (lambda_cycle). Encourages the encoder to
+# produce similar latent codes for original and reconstructed sequences:
+# L_cycle = cycle_weight * MSE(E(x), E(G(E(x))))
+# Higher values enforce stricter cycle consistency.
+cycle_weight: 10.0
+
+# Number of critic updates per generator update. WGAN-GP typically uses
+# 5 critic steps to ensure the critic provides a useful gradient signal
+# before updating the generator.
+critic_iterations: 5
+
+# Gradient penalty coefficient (lambda_gp) for the Wasserstein critic.
+# Enforces the Lipschitz constraint via interpolated gradient penalty.
+# Standard WGAN-GP uses 10.0.
+gp_weight: 10.0
+
+# Blending weight between critic score and reconstruction error for the
+# final anomaly score:
+#   score = alpha * (1 - critic_norm) + (1 - alpha) * recon_error
+# alpha=0.5 gives equal weight to both signals. alpha=1.0 uses only critic.
+# alpha=0.0 uses only reconstruction error.
+alpha: 0.5
+
+# Adam optimiser learning rate. Lower values train more slowly but may
+# converge to a better minimum. Typical range: 1e-4 to 1e-2.
+# Uses betas=(0.5, 0.999) as is standard for GAN training.
+learning_rate: 0.001
+
+# Number of full passes through the training data.
+epochs: 100
+
+# Mini-batch size for the DataLoader. Larger batches stabilise gradients
+# but use more memory.
+batch_size: 32

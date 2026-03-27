@@ -1,0 +1,36 @@
+# Hybrid Ensemble Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: hybrid_ensemble
+
+# Training mode — ensemble trains sub-models on all data by default.
+# Individual sub-models that require normal_only will filter internally.
+training_mode: all_data
+
+# List of registered model names to combine.
+# Each name must correspond to an @register_model identifier.
+sub_models:
+  - zscore
+  - isolation_forest
+  - lstm
+
+# Per-model weights.  Must have the same length as sub_models.
+# Weights are renormalised if a sub-model fails at score time.
+weights:
+  - 0.3
+  - 0.3
+  - 0.4
+
+# Combination strategy:
+#   weighted_average  — weighted sum of min-max normalised scores
+#   majority_voting   — threshold each sub-model, weighted vote
+#   stacking          — logistic regression meta-learner on sub-model scores
+#                       (requires val_X and val_labels during fit)
+strategy: weighted_average
+
+# Threshold applied to each sub-model's normalised score when using
+# majority_voting.  Ignored for other strategies.
+# Range: 0.0 to 1.0.  A lower value increases sensitivity.
+voting_threshold: 0.5

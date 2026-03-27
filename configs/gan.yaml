@@ -1,0 +1,43 @@
+# GANomaly-style Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+#
+# Architecture: Encoder1 -> Decoder -> Encoder2 (no separate discriminator).
+# Loss: lambda_recon * MSE(x, G(x)) + lambda_latent * MSE(z1, E2(G(x)))
+# Anomaly score: MSE(x, G(x)) + MSE(z1, z2) per sample.
+# Reference: Akcay et al., "GANomaly: Semi-Supervised Anomaly Detection via
+#            Adversarial Training", 2018.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: gan
+
+# Hidden-layer width for both Encoder1 and Encoder2.
+# Larger values increase capacity but cost more memory.
+encoder_dim: 64
+
+# Hidden-layer width for the Decoder.
+# Typically matches encoder_dim, but can differ.
+decoder_dim: 64
+
+# Dimensionality of the shared latent space.
+# Smaller values force more compression; too small loses useful structure.
+latent_dim: 16
+
+# Weight for the reconstruction loss term MSE(x, G(x)).
+# Higher values emphasise faithful input reconstruction.
+lambda_recon: 1.0
+
+# Weight for the latent-consistency loss term MSE(z1, z2).
+# Higher values emphasise consistency between the two encoders.
+lambda_latent: 1.0
+
+# Adam optimiser learning rate. Typical range: 1e-4 to 1e-2.
+learning_rate: 0.001
+
+# Number of full passes through the training data.
+# More epochs allow better convergence but risk overfitting.
+epochs: 100
+
+# Mini-batch size for the DataLoader. Larger batches stabilise gradients
+# but use more memory. Must be <= n_samples.
+batch_size: 32
