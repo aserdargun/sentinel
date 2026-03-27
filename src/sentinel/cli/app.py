@@ -16,6 +16,7 @@ from sentinel.cli.detect import detect_app
 from sentinel.cli.evaluate import evaluate_app
 from sentinel.cli.generate import generate_app
 from sentinel.cli.ingest import ingest_app
+from sentinel.cli.mcp_serve import mcp_serve_app
 from sentinel.cli.pi import pi_app
 from sentinel.cli.serve import serve_app
 from sentinel.cli.train import train_app
@@ -38,6 +39,7 @@ app.add_typer(validate_config_app, name="validate-config")
 app.add_typer(visualize_app, name="visualize")
 app.add_typer(pi_app, name="pi")
 app.add_typer(serve_app, name="serve")
+app.add_typer(mcp_serve_app, name="mcp-serve")
 
 if __name__ == "__main__":
     app()
