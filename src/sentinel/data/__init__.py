@@ -10,6 +10,7 @@ from sentinel.data.preprocessors import (
     scale_zscore,
     to_numpy,
 )
+from sentinel.data.streaming import stream_from_dataframe, stream_from_parquet
 from sentinel.data.synthetic import generate_synthetic
 from sentinel.data.validators import (
     get_feature_columns,
@@ -32,6 +33,8 @@ __all__ = [
     "scale_minmax",
     "scale_zscore",
     "separate_labels",
+    "stream_from_dataframe",
+    "stream_from_parquet",
     "to_numpy",
     "validate_dataframe",
 ]
