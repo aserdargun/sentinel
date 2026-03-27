@@ -1,0 +1,37 @@
+# TranAD Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: tranad
+
+# Transformer embedding dimension. Input features are projected to this
+# size before entering the encoder. Must be divisible by nhead.
+d_model: 64
+
+# Number of attention heads in each transformer encoder/decoder layer.
+# d_model must be divisible by nhead.
+nhead: 4
+
+# Number of stacked transformer layers in the encoder and each decoder.
+# More layers increase capacity but also training time and memory.
+num_layers: 2
+
+# Sliding-window length for sequence input. Longer windows capture more
+# temporal context but require more data and memory.
+seq_len: 50
+
+# Weight (lambda_adv) on the adversarial decoder loss term.
+# L = MSE(x, O1) - adversarial_weight * MSE(x, O2)
+# Higher values increase the adversarial pressure on D2.
+adversarial_weight: 1.0
+
+# Adam optimiser learning rate. Typical range: 1e-4 to 1e-2.
+learning_rate: 0.001
+
+# Number of full passes through the training data.
+epochs: 100
+
+# Mini-batch size for the DataLoader. Larger batches stabilise gradients
+# but use more memory.
+batch_size: 32

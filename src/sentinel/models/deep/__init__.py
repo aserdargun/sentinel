@@ -31,3 +31,18 @@ if _HAS_TORCH:
         from sentinel.models.deep import tcn  # noqa: F401
     except ImportError:
         pass
+
+    try:
+        from sentinel.models.deep import vae  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
+        from sentinel.models.deep import tranad  # noqa: F401
+    except ImportError:
+        pass
+
+    try:
+        from sentinel.models.deep import diffusion  # noqa: F401
+    except ImportError:
+        pass

@@ -1,0 +1,35 @@
+# Variational Autoencoder (VAE) Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: vae
+
+# Dimensionality of the latent space z. Controls the information bottleneck:
+# smaller values force more compression but may lose fine-grained structure.
+# Typical range: 8 to 64 depending on data complexity.
+latent_dim: 16
+
+# Beta (KL weight) — multiplier for the KL divergence term in the ELBO loss.
+# kl_weight=1.0 is the standard VAE. Values <1 relax the prior constraint
+# (better reconstruction, weaker regularization). Values >1 push toward a
+# more disentangled but potentially less accurate latent space.
+kl_weight: 1.0
+
+# Encoder hidden layer sizes. The decoder mirrors them in reverse order.
+# input_dim -> 64 -> 32 -> latent_dim (bottleneck) -> 32 -> 64 -> input_dim
+# Wider/deeper networks can capture more complex patterns at the cost of
+# training time and overfitting risk.
+hidden_dims: [64, 32]
+
+# Adam optimiser learning rate. Lower values train more slowly but may
+# converge to a better minimum. Typical range: 1e-4 to 1e-2.
+learning_rate: 0.001
+
+# Number of full passes through the training data.
+# More epochs allow better convergence but risk overfitting on small datasets.
+epochs: 100
+
+# Mini-batch size for the DataLoader. Larger batches stabilise gradients
+# but use more memory. Must be <= n_samples.
+batch_size: 32

@@ -1,0 +1,39 @@
+# Diffusion (DDPM) Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: diffusion
+
+# Number of diffusion steps T in the linear noise schedule.
+# More steps give finer noise granularity but increase scoring cost.
+# Typical range: 50–1000. Default 100 balances quality and speed.
+timesteps: 100
+
+# Width of each hidden layer in the noise predictor MLP.
+# Larger values increase capacity but also memory and training time.
+hidden_dim: 64
+
+# Number of hidden layers in the noise predictor MLP (minimum 1).
+# More layers can model complex noise patterns but risk overfitting.
+num_layers: 2
+
+# Adam optimiser learning rate. Lower values train more slowly but may
+# converge to a better minimum. Typical range: 1e-4 to 1e-2.
+learning_rate: 0.001
+
+# Number of full passes through the training data.
+# More epochs allow better convergence but risk overfitting on small datasets.
+epochs: 100
+
+# Mini-batch size for the DataLoader. Larger batches stabilise gradients
+# but use more memory. Must be <= n_samples.
+batch_size: 32
+
+# Starting value of the linear beta noise schedule.
+# Controls how little noise is added at the first timestep.
+beta_start: 1.0e-4
+
+# Ending value of the linear beta noise schedule.
+# Controls how much noise is added at the final timestep.
+beta_end: 0.02
