@@ -1,5 +1,6 @@
 """Data pipeline for Sentinel."""
 
+from sentinel.data.features import add_lags, add_rolling_stats, add_temporal_features
 from sentinel.data.loaders import load_csv, load_file, load_parquet
 from sentinel.data.preprocessors import (
     chronological_split,
@@ -17,6 +18,9 @@ from sentinel.data.validators import (
 )
 
 __all__ = [
+    "add_lags",
+    "add_rolling_stats",
+    "add_temporal_features",
     "chronological_split",
     "create_windows",
     "fill_nan",

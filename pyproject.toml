@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "sentinel"
 version = "0.1.0"
@@ -22,6 +26,9 @@ dependencies = [
 [project.scripts]
 sentinel = "sentinel.cli.app:app"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/sentinel"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py312"
@@ -45,6 +52,7 @@ markers = [
     "slow: end-to-end acceptance tests",
     "pi: PI System tests (Windows only)",
     "benchmark: performance benchmarks",
+    "integration: integration tests",
 ]
 asyncio_mode = "auto"
 
