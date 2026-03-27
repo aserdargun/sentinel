@@ -1,0 +1,16 @@
+# Z-Score Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: zscore
+
+# Number of preceding samples used to compute the rolling mean and std.
+# Larger windows smooth out noise but are slower to react to regime changes.
+# Typical range: 10-100.
+window_size: 30
+
+# Z-score threshold in standard deviations. Points whose maximum per-feature
+# z-score exceeds this value are flagged as anomalous.
+# 2.0 = ~95th percentile, 3.0 = ~99.7th percentile (for Gaussian data).
+threshold_sigma: 3.0

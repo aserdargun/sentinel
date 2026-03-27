@@ -1,0 +1,22 @@
+# Isolation Forest anomaly detector configuration.
+#
+# Inherits shared defaults (split ratios, seed, device, runtime limits)
+# from base.yaml.  Only model-specific hyperparameters are listed here.
+inherits: base.yaml
+
+# Registered model name — must match @register_model("isolation_forest").
+model: isolation_forest
+
+# Number of isolation trees in the ensemble.
+# More trees improve robustness at the cost of training time.
+# Typical range: 50 – 500.
+n_estimators: 100
+
+# Expected proportion of anomalies in the training data.
+# Used by sklearn to set the decision_function offset.
+# Must be in (0, 0.5].  Lower values are more conservative.
+contamination: 0.05
+
+# Random seed for the tree construction.
+# Overridden by the global seed when run through the Trainer.
+random_state: 42

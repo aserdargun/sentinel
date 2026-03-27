@@ -1,0 +1,50 @@
+# Sentinel base configuration.
+#
+# Shared defaults inherited by all model configs via `inherits: base.yaml`.
+# Model-specific configs override leaf values; nested sections are deep-merged.
+
+data:
+  path: "data/raw"
+  processed_path: "data/processed"
+  metadata_file: "data/datasets.json"
+
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  # Splits are ALWAYS chronological — no shuffle.
+
+# Global random seed — applied to numpy, torch, python random.
+seed: 42
+
+# Device selection: auto | cpu | cuda | mps
+device: "auto"
+
+# Training mode:
+#   normal_only — filter is_anomaly==1 before training (AE, VAE, GAN, Diffusion)
+#   all_data    — use everything (IF, Matrix Profile)
+training_mode: "normal_only"
+
+scheduler:
+  type: "reduce_on_plateau"
+  patience: 5
+  factor: 0.5
+  min_lr: 1.0e-6
+  warmup_epochs: 0
+
+runtime:
+  max_upload_size_mb: 100
+  max_features: 500
+  training_timeout_s: 3600
+  api_request_timeout_s: 300
+  max_dataset_rows_matrix_profile: 100000
+  shap_max_features: 10
+
+llm:
+  model: "nvidia/nemotron-3-nano-4b"
+  ollama_url: "http://localhost:11434"
+  timeout_s: 30
+
+logging:
+  level: "INFO"
+  format: "json"

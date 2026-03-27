@@ -1,0 +1,20 @@
+# Matrix Profile anomaly detector configuration
+#
+# Uses STOMP algorithm (via stumpy) to compute subsequence distance
+# profiles. Anomalous subsequences have large nearest-neighbor distances.
+inherits: base.yaml
+
+model: matrix_profile
+
+# Length of each subsequence window for computing the matrix profile.
+# Shorter windows detect point anomalies; longer windows detect pattern
+# anomalies. Must be >= 4 (stumpy minimum).
+# Recommended: set to the expected periodicity of your data (e.g., 60
+# for minute-level data with hourly patterns).
+subsequence_length: 50
+
+# Maximum number of rows before chunking with overlap.
+# Matrix profile is O(n^2) in memory — datasets exceeding this limit
+# are split into overlapping chunks. Overlap size equals
+# subsequence_length to avoid boundary artifacts.
+max_rows: 100000
