@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - Upload Dataset</title>
+    <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/ui/" class="navbar-brand">Sentinel</a>
+        <ul class="navbar-nav">
+            <li><a href="/ui/">Dashboard</a></li>
+            <li><a href="/ui/upload.html" class="active">Upload</a></li>
+            <li><a href="/ui/explore.html">Explore</a></li>
+            <li><a href="/ui/pi.html">PI System</a></li>
+            <li><a href="/ui/prompt.html">Prompt</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Upload Dataset</h1>
+
+        <div id="upload-alert"></div>
+
+        <div class="card">
+            <div class="card-title">Upload CSV or Parquet File</div>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.875rem;">
+                Files must follow the Sentinel schema: first column is
+                <code>timestamp</code>, remaining columns are numeric features.
+                Maximum file size: 100 MB.
+            </p>
+
+            <div id="upload-area" class="upload-area">
+                <p style="font-size:1.1rem; color:var(--text-primary); font-weight:500;">
+                    Drag and drop a file here
+                </p>
+                <p>or click to browse</p>
+                <p style="margin-top:0.5rem; font-size:0.8rem;">
+                    Supported formats: CSV, Parquet
+                </p>
+                <input type="file" id="file-input" accept=".csv,.parquet,.pq" style="display:none;">
+            </div>
+
+            <div id="file-info" class="hidden" style="margin-top:1rem;">
+                <div class="alert alert-info">
+                    Selected: <strong id="file-name"></strong>
+                    (<span id="file-size"></span>)
+                </div>
+            </div>
+
+            <div style="margin-top:1rem;">
+                <button id="upload-btn" class="btn btn-primary" disabled>
+                    Upload
+                </button>
+                <span id="upload-spinner" class="spinner hidden" style="margin-left:0.75rem;"></span>
+            </div>
+        </div>
+
+        <div id="upload-result" class="card hidden">
+            <div class="card-title">Upload Result</div>
+            <div class="table-wrapper">
+                <table>
+                    <tbody id="result-body"></tbody>
+                </table>
+            </div>
+            <div style="margin-top:1rem;">
+                <a id="explore-link" href="#" class="btn btn-primary">Explore Dataset</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initUploadPage();
+        });
+    </script>
+</body>
+</html>

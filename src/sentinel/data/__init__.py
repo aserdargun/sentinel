@@ -2,6 +2,7 @@
 
 from sentinel.data.features import add_lags, add_rolling_stats, add_temporal_features
 from sentinel.data.loaders import load_csv, load_file, load_parquet
+from sentinel.data.pi_connector import PIConnectionError, PIConnector, is_pi_available
 from sentinel.data.preprocessors import (
     chronological_split,
     create_windows,
@@ -19,6 +20,8 @@ from sentinel.data.validators import (
 )
 
 __all__ = [
+    "PIConnectionError",
+    "PIConnector",
     "add_lags",
     "add_rolling_stats",
     "add_temporal_features",
@@ -27,6 +30,7 @@ __all__ = [
     "fill_nan",
     "generate_synthetic",
     "get_feature_columns",
+    "is_pi_available",
     "load_csv",
     "load_file",
     "load_parquet",

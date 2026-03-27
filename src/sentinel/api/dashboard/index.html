@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - Anomaly Detection Platform</title>
+    <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/ui/" class="navbar-brand">Sentinel</a>
+        <ul class="navbar-nav">
+            <li><a href="/ui/" class="active">Dashboard</a></li>
+            <li><a href="/ui/upload.html">Upload</a></li>
+            <li><a href="/ui/explore.html">Explore</a></li>
+            <li><a href="/ui/pi.html">PI System</a></li>
+            <li><a href="/ui/prompt.html">Prompt</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Dashboard</h1>
+
+        <div id="status-alert"></div>
+
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-title">Datasets</div>
+                <p id="dataset-count" style="font-size:2rem; font-weight:700;">--</p>
+                <p style="color:var(--text-secondary); font-size:0.875rem;">Uploaded datasets</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Models</div>
+                <p id="model-count" style="font-size:2rem; font-weight:700;">--</p>
+                <p style="color:var(--text-secondary); font-size:0.875rem;">Registered models</p>
+            </div>
+            <div class="card">
+                <div class="card-title">API Status</div>
+                <p id="api-status" style="font-size:2rem; font-weight:700;">--</p>
+                <p id="api-status-detail" style="color:var(--text-secondary); font-size:0.875rem;">Checking...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Datasets</div>
+            <div id="datasets-loading" class="alert alert-info">Loading datasets...</div>
+            <div id="datasets-empty" class="alert alert-warning hidden">
+                No datasets found. <a href="/ui/upload.html" style="color:var(--accent);">Upload one</a>.
+            </div>
+            <div class="table-wrapper">
+                <table id="datasets-table" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Shape</th>
+                            <th>Source</th>
+                            <th>Uploaded</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="datasets-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Registered Models</div>
+            <div id="models-loading" class="alert alert-info">Loading models...</div>
+            <div class="table-wrapper">
+                <table id="models-table" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="models-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

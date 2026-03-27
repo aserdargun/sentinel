@@ -1,0 +1,26 @@
+# PI System connection configuration.
+#
+# Used by sentinel.data.pi_connector.PIConnector and the PI CLI/API
+# commands.  Connection uses Windows Integrated Authentication by
+# default (no credentials stored).
+
+server:
+  host: my-pi-server
+  port: 5450
+  timeout: 30
+
+default_tags: []              # No defaults -- user must specify
+
+time_range:
+  start: "*-1d"
+  end: "*"
+
+interval: "5m"
+
+cache:
+  backend: sqlite             # sqlite | arrow_ipc | none
+  directory: "data/.pi_cache" # Cache storage location (git-ignored)
+  ttl_hours: 24
+  max_size_mb: 500            # Evict oldest entries when exceeded
+
+timezone: "UTC"               # All PI data normalized to this timezone

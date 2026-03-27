@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - Prompt</title>
+    <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/ui/" class="navbar-brand">Sentinel</a>
+        <ul class="navbar-nav">
+            <li><a href="/ui/">Dashboard</a></li>
+            <li><a href="/ui/upload.html">Upload</a></li>
+            <li><a href="/ui/explore.html">Explore</a></li>
+            <li><a href="/ui/pi.html">PI System</a></li>
+            <li><a href="/ui/prompt.html" class="active">Prompt</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Natural Language Prompt</h1>
+
+        <div id="prompt-alert"></div>
+
+        <div class="card" style="padding:0;">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-message assistant">
+                        Welcome to Sentinel. Ask me about your data, request
+                        anomaly detection, model recommendations, or analysis.
+                        For example: "Train a Z-Score model on my latest
+                        dataset" or "Which model works best for high-frequency
+                        sensor data?"
+                    </div>
+                </div>
+                <div style="padding:1rem;">
+                    <div class="chat-input-row">
+                        <input type="text" id="prompt-input" class="form-control"
+                               placeholder="Type your question..."
+                               autocomplete="off">
+                        <button id="prompt-send" class="btn btn-primary">Send</button>
+                    </div>
+                    <p style="color:var(--text-secondary); font-size:0.75rem;
+                       margin-top:0.5rem;">
+                        Powered by local Ollama LLM. Rate limited to 10
+                        requests per minute.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initPromptPage();
+        });
+    </script>
+</body>
+</html>

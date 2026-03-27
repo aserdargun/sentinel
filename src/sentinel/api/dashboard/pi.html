@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - PI System Connector</title>
+    <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/ui/" class="navbar-brand">Sentinel</a>
+        <ul class="navbar-nav">
+            <li><a href="/ui/">Dashboard</a></li>
+            <li><a href="/ui/upload.html">Upload</a></li>
+            <li><a href="/ui/explore.html">Explore</a></li>
+            <li><a href="/ui/pi.html" class="active">PI System</a></li>
+            <li><a href="/ui/prompt.html">Prompt</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">PI System Connector</h1>
+
+        <div id="pi-alert"></div>
+
+        <div class="grid-2">
+            <!-- Server Config -->
+            <div class="card">
+                <div class="card-title">Server Configuration</div>
+                <div class="form-group">
+                    <label for="pi-server">Server Host</label>
+                    <input type="text" id="pi-server" class="form-control"
+                           placeholder="my-pi-server" value="">
+                </div>
+                <div class="form-group">
+                    <label for="pi-port">Port</label>
+                    <input type="number" id="pi-port" class="form-control"
+                           value="5450">
+                </div>
+                <div class="form-group">
+                    <label for="pi-timeout">Timeout (s)</label>
+                    <input type="number" id="pi-timeout" class="form-control"
+                           value="30">
+                </div>
+            </div>
+
+            <!-- Tag Search -->
+            <div class="card">
+                <div class="card-title">Search Tags</div>
+                <div class="form-group">
+                    <label for="pi-search-pattern">Tag Pattern</label>
+                    <input type="text" id="pi-search-pattern" class="form-control"
+                           placeholder="Pump*">
+                </div>
+                <button id="pi-search-btn" class="btn btn-secondary">
+                    Search Tags
+                </button>
+                <span id="pi-search-spinner" class="spinner hidden"
+                      style="margin-left:0.5rem;"></span>
+
+                <div id="pi-search-results" class="hidden" style="margin-top:1rem;">
+                    <label style="font-size:0.875rem; color:var(--text-secondary);">
+                        Select tags to fetch:
+                    </label>
+                    <div id="pi-tags-list" style="max-height:200px; overflow-y:auto;
+                         margin-top:0.5rem; padding:0.5rem;
+                         background:var(--bg-card); border-radius:var(--radius);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fetch Config -->
+        <div class="card">
+            <div class="card-title">Fetch Timeseries</div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label for="pi-tags-input">Tags (comma-separated)</label>
+                    <input type="text" id="pi-tags-input" class="form-control"
+                           placeholder="Tag1, Tag2, Tag3">
+                </div>
+                <div class="form-group">
+                    <label for="pi-start">Start Time</label>
+                    <input type="text" id="pi-start" class="form-control"
+                           value="*-7d" placeholder="*-7d">
+                </div>
+                <div class="form-group">
+                    <label for="pi-end">End Time</label>
+                    <input type="text" id="pi-end" class="form-control"
+                           value="*" placeholder="*">
+                </div>
+            </div>
+            <div class="form-group" style="max-width:200px;">
+                <label for="pi-interval">Interval</label>
+                <input type="text" id="pi-interval" class="form-control"
+                       value="1m" placeholder="1m">
+            </div>
+            <button id="pi-fetch-btn" class="btn btn-primary">
+                Fetch Data
+            </button>
+            <span id="pi-fetch-spinner" class="spinner hidden"
+                  style="margin-left:0.5rem;"></span>
+        </div>
+
+        <!-- Fetch Result -->
+        <div id="pi-fetch-result" class="card hidden">
+            <div class="card-title">Fetch Result</div>
+            <div class="table-wrapper">
+                <table>
+                    <tbody id="pi-result-body"></tbody>
+                </table>
+            </div>
+            <div style="margin-top:1rem;">
+                <a id="pi-explore-link" href="#" class="btn btn-primary">
+                    Explore Dataset
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initPIPage();
+        });
+    </script>
+</body>
+</html>
