@@ -1,0 +1,23 @@
+# Autoencoder Anomaly Detector Configuration
+# Inherits shared defaults (split ratios, seed, device, runtime limits) from base.yaml.
+inherits: base.yaml
+
+# Model identifier — must match the @register_model name.
+model: autoencoder
+
+# Encoder hidden layer sizes. The decoder mirrors them in reverse order.
+# input_dim -> 64 -> 32 -> 16 (bottleneck) -> 32 -> 64 -> input_dim
+# Deeper/narrower bottlenecks force more aggressive compression.
+hidden_dims: [64, 32, 16]
+
+# Adam optimiser learning rate. Lower values train more slowly but may
+# converge to a better minimum. Typical range: 1e-4 to 1e-2.
+learning_rate: 0.001
+
+# Number of full passes through the training data.
+# More epochs allow better convergence but risk overfitting on small datasets.
+epochs: 100
+
+# Mini-batch size for the DataLoader. Larger batches stabilise gradients
+# but use more memory. Must be <= n_samples.
+batch_size: 32

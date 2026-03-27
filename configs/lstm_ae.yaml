@@ -1,0 +1,30 @@
+# LSTM Autoencoder configuration.
+#
+# Encoder: LSTM(n_features, encoder_dim) -> Linear(encoder_dim, latent_dim)
+# Decoder: Linear(latent_dim, decoder_dim) -> LSTM(decoder_dim, n_features)
+# Loss:    MSE reconstruction error
+# Score:   Mean MSE per sliding window
+
+inherits: base.yaml
+model: lstm_ae
+
+# LSTM hidden dimension for the encoder.
+encoder_dim: 64
+
+# LSTM hidden dimension for the decoder.
+decoder_dim: 64
+
+# Size of the bottleneck latent vector between encoder and decoder.
+latent_dim: 16
+
+# Sliding-window sequence length.
+seq_len: 50
+
+# Adam optimiser learning rate.
+learning_rate: 0.001
+
+# Number of training epochs.
+epochs: 100
+
+# Mini-batch size.
+batch_size: 32

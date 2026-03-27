@@ -1,0 +1,20 @@
+# LSTM predictor configuration.
+#
+# Next-step predictor: the LSTM reads a window of `seq_len` timesteps and
+# predicts the next one. Anomaly score = MSE between prediction and actual.
+
+inherits: base.yaml
+model: lstm
+
+# LSTM architecture
+hidden_dim: 64        # Hidden state dimension per LSTM layer
+num_layers: 2         # Number of stacked LSTM layers
+dropout: 0.1          # Dropout between LSTM layers (disabled when num_layers==1)
+
+# Sequence / windowing
+seq_len: 50           # Input window length (number of timesteps fed to the LSTM)
+
+# Training
+learning_rate: 0.001  # Adam optimizer learning rate
+epochs: 100           # Number of training epochs
+batch_size: 32        # Mini-batch size

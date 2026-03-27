@@ -1,0 +1,29 @@
+# Temporal Convolutional Network configuration.
+#
+# Dilated causal convolutions with residual blocks for sequence
+# reconstruction.  Anomaly score = per-window MSE.
+
+inherits: base.yaml
+model: tcn
+
+# Channel sizes per temporal block.  Length of this list determines the
+# number of stacked blocks.  Dilation doubles per block (1, 2, 4, ...).
+num_channels: [32, 32, 32]
+
+# Kernel size for causal convolutions within each block.
+kernel_size: 3
+
+# Dropout probability applied after each ReLU activation.
+dropout: 0.1
+
+# Sliding window / sequence length fed to the network.
+seq_len: 50
+
+# Adam optimiser learning rate.
+learning_rate: 0.001
+
+# Number of training epochs.
+epochs: 100
+
+# Mini-batch size.
+batch_size: 32
