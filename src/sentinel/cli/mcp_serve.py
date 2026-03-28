@@ -39,7 +39,7 @@ def mcp_serve(
         help="Ollama server URL.",
     ),
     ollama_model: str = typer.Option(
-        "nvidia/nemotron-3-nano-4b",
+        "nemotron-3-nano:4b",
         help="Ollama model name for LLM features.",
     ),
 ) -> None:

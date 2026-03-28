@@ -8,11 +8,11 @@ error, padded to match the original input length.
 from __future__ import annotations
 
 import json
-import logging
 import os
 from typing import Any
 
 import numpy as np
+import structlog
 
 from sentinel.core.base_model import BaseAnomalyDetector
 from sentinel.core.device import resolve_device
@@ -20,7 +20,7 @@ from sentinel.core.exceptions import SentinelError
 from sentinel.core.registry import register_model
 from sentinel.data.preprocessors import create_windows
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 try:
     import torch
@@ -265,7 +265,7 @@ if HAS_TORCH:
             self.batch_size = batch_size
             self.device_str = device
 
-            self._device: torch.device = torch.device(resolve_device(device))
+            self._device: torch.device | None = None
             self._model: _TCNModel | None = None
             self._n_features: int | None = None
             self._is_fitted: bool = False
@@ -294,6 +294,8 @@ if HAS_TORCH:
                 )
 
             self._n_features = n_features
+            self._device = torch.device(resolve_device(self.device_str))
+
             windows = create_windows(X, self.seq_len)
             # windows: (n_windows, seq_len, n_features)
 
@@ -486,7 +488,11 @@ if HAS_TORCH:
 
             dataset = TensorDataset(tensor)
             loader = DataLoader(
-                dataset, batch_size=self.batch_size, shuffle=True, drop_last=False
+                dataset,
+                batch_size=self.batch_size,
+                shuffle=True,
+                drop_last=False,
+                num_workers=0,
             )
 
             optimizer = torch.optim.Adam(

@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import structlog
 from fastapi import APIRouter, HTTPException, Request
 
+from sentinel.api.deps import resolve_safe_path
 from sentinel.api.schemas import ErrorResponse, TrainJobResponse, TrainRequest
 from sentinel.core.config import RunConfig
 from sentinel.core.exceptions import ConfigError
@@ -40,8 +39,8 @@ async def submit_training_job(
     """
     job_manager = request.app.state.job_manager
 
-    # Validate config path.
-    config_path = Path(body.config_path)
+    # Sanitize and validate config path.
+    config_path = resolve_safe_path(body.config_path)
     if not config_path.exists():
         raise HTTPException(
             status_code=400,
@@ -60,9 +59,9 @@ async def submit_training_job(
             detail="Config must specify a 'model' field.",
         )
 
-    # Validate data path if provided.
+    # Sanitize and validate data path if provided.
     if body.data_path is not None:
-        data_path_obj = Path(body.data_path)
+        data_path_obj = resolve_safe_path(body.data_path)
         if not data_path_obj.exists():
             raise HTTPException(
                 status_code=400,
@@ -85,6 +84,56 @@ async def submit_training_job(
         model_name=config.model,
         poll_url=f"/api/train/{job_id}",
     )
+
+
+@router.delete(
+    "/{job_id}",
+    responses={
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
+)
+async def cancel_training_job(
+    job_id: str,
+    request: Request,
+) -> dict[str, str]:
+    """Cancel a queued training job.
+
+    Only jobs that have not yet started can be cancelled.  Returns 409
+    if the job is already completed or running.
+
+    Args:
+        job_id: The job identifier returned by ``POST /api/train``.
+        request: FastAPI request (provides access to app state).
+
+    Returns:
+        Confirmation message.
+    """
+    job_manager = request.app.state.job_manager
+
+    try:
+        status = job_manager.get_job_status(job_id)
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job not found: {job_id}",
+        )
+
+    if status["status"] in ("completed", "failed"):
+        raise HTTPException(
+            status_code=409,
+            detail=f"Job {job_id} already {status['status']}.",
+        )
+
+    cancelled = job_manager.cancel_job(job_id)
+    if not cancelled:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Job {job_id} is already running and cannot be cancelled.",
+        )
+
+    logger.info("train.job_cancelled", job_id=job_id)
+    return {"message": f"Job {job_id} cancelled."}
 
 
 @router.get(

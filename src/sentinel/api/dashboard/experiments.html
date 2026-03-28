@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - Experiments</title>
+    <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/ui/" class="navbar-brand">Sentinel</a>
+        <ul class="navbar-nav">
+            <li><a href="/ui/">Dashboard</a></li>
+            <li><a href="/ui/upload.html">Upload</a></li>
+            <li><a href="/ui/explore.html">Explore</a></li>
+            <li><a href="/ui/train.html">Train</a></li>
+            <li><a href="/ui/experiments.html" class="active">Experiments</a></li>
+            <li><a href="/ui/pi.html">PI System</a></li>
+            <li><a href="/ui/prompt.html">Prompt</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Experiments</h1>
+        <div style="color:var(--text-secondary); font-size:0.8rem; margin-bottom:1rem;">
+            Step: <span style="color:var(--text-primary);">Upload</span> &rarr;
+            <span style="color:var(--text-primary);">Explore</span> &rarr;
+            <span style="color:var(--text-primary);">Train</span> &rarr;
+            <strong style="color:var(--accent);">Experiments</strong>
+        </div>
+
+        <div id="experiments-alert"></div>
+
+        <div class="card">
+            <div class="card-title">Experiment Runs</div>
+            <div id="runs-loading" class="alert alert-info">Loading experiments...</div>
+            <div id="runs-empty" class="alert alert-warning hidden">
+                No experiment runs found. <a href="/ui/train.html" style="color:var(--accent);">Train a model</a> first.
+            </div>
+            <div class="table-wrapper">
+                <table id="runs-table" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>Run ID</th>
+                            <th>Model</th>
+                            <th>Created</th>
+                            <th>F1</th>
+                            <th>AUC-ROC</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="runs-body"></tbody>
+                </table>
+            </div>
+            <div id="runs-pagination" style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;" class="hidden">
+                <button id="prev-page" class="btn btn-secondary" disabled>Prev</button>
+                <span id="page-info" style="color:var(--text-secondary); font-size:0.875rem;"></span>
+                <button id="next-page" class="btn btn-secondary" disabled>Next</button>
+            </div>
+        </div>
+
+        <div id="compare-card" class="card hidden">
+            <div class="card-title">Compare Selected Runs</div>
+            <div id="compare-content"></div>
+        </div>
+
+        <div id="metrics-card" class="card hidden">
+            <div class="card-title">Run Metrics</div>
+            <div id="metrics-content"></div>
+        </div>
+
+        <div id="detect-card" class="card hidden">
+            <div class="card-title">Run Detection</div>
+            <div id="detect-alert"></div>
+            <p style="color:var(--text-secondary); font-size:0.875rem; margin-bottom:0.75rem;">
+                Use the trained model from <strong id="detect-run-id"></strong> to detect anomalies on a dataset.
+            </p>
+            <div class="form-group">
+                <label for="detect-dataset">Dataset</label>
+                <select id="detect-dataset" class="form-control">
+                    <option value="">Select a dataset...</option>
+                </select>
+            </div>
+            <button id="detect-btn" class="btn btn-primary">Detect Anomalies</button>
+            <span id="detect-spinner" class="spinner hidden" style="margin-left:0.75rem;"></span>
+            <div id="detect-result" class="hidden" style="margin-top:1rem;">
+                <table>
+                    <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+                    <tbody id="detect-result-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initExperimentsPage();
+        });
+    </script>
+</body>
+</html>

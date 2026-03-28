@@ -105,8 +105,12 @@ async function loadDashboard() {
                     "<td>" + shape + "</td>" +
                     "<td>" + (ds.source || "") + "</td>" +
                     "<td>" + (ds.uploaded_at || "").substring(0, 19) + "</td>" +
-                    '<td><a href="/ui/explore.html?id=' + ds.dataset_id +
-                    '" class="btn btn-secondary" style="padding:0.25rem 0.5rem;font-size:0.8rem;">Explore</a></td>';
+                    '<td>' +
+                    '<a href="/ui/explore.html?id=' + ds.dataset_id +
+                    '" class="btn btn-secondary" style="padding:0.25rem 0.5rem;font-size:0.8rem;">Explore</a> ' +
+                    '<a href="/ui/train.html?dataset_id=' + ds.dataset_id +
+                    '" class="btn btn-primary" style="padding:0.25rem 0.5rem;font-size:0.8rem;">Train</a>' +
+                    '</td>';
                 body.appendChild(tr);
             }
         }
@@ -236,6 +240,10 @@ function initUploadPage() {
 
             document.getElementById("explore-link").href =
                 "/ui/explore.html?id=" + data.dataset_id;
+            var trainLinkEl = document.getElementById("train-link");
+            if (trainLinkEl) {
+                trainLinkEl.href = "/ui/train.html?dataset_id=" + data.dataset_id;
+            }
 
             showAlert("upload-alert", "Upload successful!", "success");
         } catch (err) {
@@ -277,6 +285,12 @@ async function initExplorePage() {
         const tr = info.time_range || {};
         document.getElementById("info-range").textContent =
             (tr.start || "N/A") + " to " + (tr.end || "N/A");
+
+        // Set the "Train with this dataset" link.
+        var trainLink = document.getElementById("train-link");
+        if (trainLink) {
+            trainLink.href = "/ui/train.html?dataset_id=" + datasetId;
+        }
     } catch (err) {
         showAlert("explore-alert", "Failed to load dataset info: " + err.message, "error");
         return;
@@ -509,6 +523,472 @@ function initPIPage() {
             document.getElementById("pi-fetch-spinner").classList.add("hidden");
         }
     });
+}
+
+// ---------------------------------------------------------------------------
+// Train page (train.html)
+// ---------------------------------------------------------------------------
+
+var _trainPollingIntervals = [];
+
+function initTrainPage() {
+    var trainBtn = document.getElementById("train-btn");
+    var configSelect = document.getElementById("config-path");
+    var datasetSelect = document.getElementById("dataset-select");
+    if (!trainBtn) return;
+
+    // Load available configs (well-known config names) with friendly labels.
+    var configs = [
+        { value: "configs/zscore.yaml", label: "Z-Score (statistical)" },
+        { value: "configs/isolation_forest.yaml", label: "Isolation Forest (statistical)" },
+        { value: "configs/matrix_profile.yaml", label: "Matrix Profile (statistical)" },
+        { value: "configs/autoencoder.yaml", label: "Autoencoder (deep)" },
+        { value: "configs/rnn.yaml", label: "RNN (deep)" },
+        { value: "configs/lstm.yaml", label: "LSTM (deep)" },
+        { value: "configs/gru.yaml", label: "GRU (deep)" },
+        { value: "configs/lstm_ae.yaml", label: "LSTM Autoencoder (deep)" },
+        { value: "configs/tcn.yaml", label: "TCN (deep)" },
+        { value: "configs/vae.yaml", label: "VAE (generative)" },
+        { value: "configs/gan.yaml", label: "GAN (generative)" },
+        { value: "configs/tadgan.yaml", label: "TadGAN (generative)" },
+        { value: "configs/tranad.yaml", label: "TranAD (generative)" },
+        { value: "configs/deepar.yaml", label: "DeepAR (generative)" },
+        { value: "configs/diffusion.yaml", label: "Diffusion (generative)" },
+        { value: "configs/ensemble.yaml", label: "Hybrid Ensemble" },
+    ];
+    for (var i = 0; i < configs.length; i++) {
+        var opt = document.createElement("option");
+        opt.value = configs[i].value;
+        opt.textContent = configs[i].label;
+        configSelect.appendChild(opt);
+    }
+
+    // Load datasets into the dropdown.
+    var preselectedDatasetId = new URLSearchParams(window.location.search).get("dataset_id");
+    apiFetch("/data?page=1&limit=200").then(function(data) {
+        var items = data.items || [];
+        for (var j = 0; j < items.length; j++) {
+            var ds = items[j];
+            var dsOpt = document.createElement("option");
+            dsOpt.value = ds.dataset_id;
+            var shape = ds.shape
+                ? ds.shape[0] + "x" + ds.shape[1]
+                : ds.rows + "x" + ds.columns;
+            dsOpt.textContent = (ds.name || ds.dataset_id.substring(0, 12)) + " (" + shape + ")";
+            datasetSelect.appendChild(dsOpt);
+        }
+        // Pre-select if dataset_id was passed via URL.
+        if (preselectedDatasetId) {
+            datasetSelect.value = preselectedDatasetId;
+        }
+    }).catch(function() {});
+
+    // Load models info.
+    apiFetch("/models").then(function(data) {
+        var models = data.models || [];
+        var html = "<ul style='list-style:none; padding:0; margin:0;'>";
+        for (var j = 0; j < models.length; j++) {
+            var m = models[j];
+            html += "<li style='padding:0.25rem 0;'><span style='color:var(--accent);'>" +
+                m.name + "</span> <span style='color:var(--text-secondary); font-size:0.8rem;'>(" +
+                (m.category || "unknown") + ")</span></li>";
+        }
+        html += "</ul>";
+        document.getElementById("models-info").innerHTML = html;
+    }).catch(function() {
+        document.getElementById("models-info").textContent = "Failed to load models.";
+    });
+
+    // Submit training job.
+    trainBtn.addEventListener("click", async function () {
+        var configPath = configSelect.value;
+        if (!configPath) {
+            showAlert("train-alert", "Please select a model config.", "warning");
+            return;
+        }
+
+        var selectedDataset = datasetSelect.value;
+        var body = { config_path: configPath };
+        if (selectedDataset) {
+            body.data_path = "data/raw/" + selectedDataset + ".parquet";
+        }
+
+        trainBtn.disabled = true;
+        document.getElementById("train-spinner").classList.remove("hidden");
+        clearAlert("train-alert");
+
+        try {
+            var result = await apiFetch("/train", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+            showAlert("train-alert",
+                "Job submitted: " + result.job_id + " (model: " + result.model_name + ")",
+                "success");
+            _startJobPolling(result.job_id);
+            _loadJobs();
+        } catch (err) {
+            showAlert("train-alert", "Training failed: " + err.message, "error");
+        } finally {
+            trainBtn.disabled = false;
+            document.getElementById("train-spinner").classList.add("hidden");
+        }
+    });
+
+    _loadJobs();
+}
+
+function _loadJobs() {
+    // We poll each known job. For now, list recent jobs from the API.
+    // The jobs API doesn't have a list endpoint via REST, so we track
+    // submitted jobs in sessionStorage.
+    var jobIds = JSON.parse(sessionStorage.getItem("sentinel_jobs") || "[]");
+    var jobsTable = document.getElementById("jobs-table");
+    var jobsBody = document.getElementById("jobs-body");
+    var jobsLoading = document.getElementById("jobs-loading");
+    var jobsEmpty = document.getElementById("jobs-empty");
+
+    if (!jobsBody) return;
+
+    jobsLoading.classList.add("hidden");
+
+    if (jobIds.length === 0) {
+        jobsEmpty.classList.remove("hidden");
+        jobsTable.classList.add("hidden");
+        return;
+    }
+
+    jobsEmpty.classList.add("hidden");
+    jobsTable.classList.remove("hidden");
+    jobsBody.innerHTML = "";
+
+    for (var i = 0; i < jobIds.length; i++) {
+        _renderJobRow(jobIds[i], jobsBody);
+    }
+}
+
+async function _renderJobRow(jobId, tbody) {
+    try {
+        var status = await apiFetch("/train/" + jobId);
+        var tr = document.createElement("tr");
+        var statusBadge = _statusBadge(status.status);
+        var progress = status.progress_pct != null ? status.progress_pct.toFixed(0) + "%" : "--";
+        var duration = status.duration_s != null ? status.duration_s.toFixed(1) + "s" : "--";
+        var actions = "";
+
+        if (status.status === "pending") {
+            actions = '<button class="btn btn-danger" style="padding:0.2rem 0.5rem;font-size:0.8rem;" ' +
+                'onclick="cancelJob(\'' + jobId + '\')">Cancel</button>';
+        } else if (status.status === "completed" && status.run_id) {
+            actions = '<button class="btn btn-secondary" style="padding:0.2rem 0.5rem;font-size:0.8rem;" ' +
+                'onclick="viewJobMetrics(\'' + status.run_id + '\')">Metrics</button>';
+        }
+
+        tr.innerHTML =
+            "<td>" + jobId + "</td>" +
+            "<td>" + (status.model_name || "") + "</td>" +
+            "<td>" + statusBadge + "</td>" +
+            "<td>" + progress + "</td>" +
+            "<td>" + duration + "</td>" +
+            "<td>" + actions + "</td>";
+        tbody.appendChild(tr);
+    } catch (err) {
+        // Job not found — remove from tracking.
+        var jobs = JSON.parse(sessionStorage.getItem("sentinel_jobs") || "[]");
+        jobs = jobs.filter(function(j) { return j !== jobId; });
+        sessionStorage.setItem("sentinel_jobs", JSON.stringify(jobs));
+    }
+}
+
+function _statusBadge(status) {
+    var cls = "badge-info";
+    if (status === "completed") cls = "badge-success";
+    else if (status === "failed") cls = "badge-danger";
+    else if (status === "cancelled") cls = "badge-warning";
+    else if (status === "running") cls = "badge-info";
+    return '<span class="badge ' + cls + '">' + status + '</span>';
+}
+
+function _startJobPolling(jobId) {
+    // Save job ID to session storage.
+    var jobs = JSON.parse(sessionStorage.getItem("sentinel_jobs") || "[]");
+    if (jobs.indexOf(jobId) === -1) {
+        jobs.unshift(jobId);
+        sessionStorage.setItem("sentinel_jobs", JSON.stringify(jobs));
+    }
+
+    // Poll every 3 seconds.
+    var interval = setInterval(async function() {
+        try {
+            var status = await apiFetch("/train/" + jobId);
+            if (status.status === "completed" || status.status === "failed" || status.status === "cancelled") {
+                clearInterval(interval);
+                _loadJobs();
+                if (status.status === "completed") {
+                    showAlert("train-alert",
+                        'Training completed! Run ID: ' + (status.run_id || "N/A") +
+                        ' &mdash; <a href="/ui/experiments.html" style="color:var(--accent);">View Experiments</a>',
+                        "success");
+                } else if (status.status === "failed") {
+                    showAlert("train-alert",
+                        "Training failed: " + (status.error_message || "Unknown error"),
+                        "error");
+                }
+            } else {
+                _loadJobs();
+            }
+        } catch (err) {
+            clearInterval(interval);
+        }
+    }, 3000);
+    _trainPollingIntervals.push(interval);
+}
+
+async function cancelJob(jobId) {
+    try {
+        await fetch(API_BASE + "/train/" + jobId, { method: "DELETE" });
+        showAlert("train-alert", "Job " + jobId + " cancelled.", "warning");
+        _loadJobs();
+    } catch (err) {
+        showAlert("train-alert", "Cancel failed: " + err.message, "error");
+    }
+}
+
+async function viewJobMetrics(runId) {
+    try {
+        var data = await apiFetch("/evaluate/" + runId);
+        var detail = document.getElementById("job-detail");
+        var content = document.getElementById("job-detail-content");
+        detail.classList.remove("hidden");
+
+        var html = "<p style='margin-bottom:0.5rem;'>Run: <strong>" + data.run_id +
+            "</strong> | Model: <strong>" + (data.model_name || "N/A") + "</strong></p>";
+        html += "<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>";
+        var metrics = data.metrics || {};
+        var keys = Object.keys(metrics);
+        for (var i = 0; i < keys.length; i++) {
+            var v = metrics[keys[i]];
+            html += "<tr><td>" + keys[i] + "</td><td>" +
+                (v !== null && v !== undefined ? (typeof v === "number" ? v.toFixed(6) : v) : "N/A") +
+                "</td></tr>";
+        }
+        html += "</tbody></table>";
+        content.innerHTML = html;
+    } catch (err) {
+        showAlert("train-alert", "Failed to load metrics: " + err.message, "error");
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Experiments page (experiments.html)
+// ---------------------------------------------------------------------------
+
+var _expPage = 1;
+var _expLimit = 20;
+
+async function initExperimentsPage() {
+    await _loadExperiments();
+
+    var prevBtn = document.getElementById("prev-page");
+    var nextBtn = document.getElementById("next-page");
+    if (prevBtn) {
+        prevBtn.addEventListener("click", function() {
+            if (_expPage > 1) { _expPage--; _loadExperiments(); }
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener("click", function() {
+            _expPage++;
+            _loadExperiments();
+        });
+    }
+}
+
+async function _loadExperiments() {
+    var runsLoading = document.getElementById("runs-loading");
+    var runsEmpty = document.getElementById("runs-empty");
+    var runsTable = document.getElementById("runs-table");
+    var runsBody = document.getElementById("runs-body");
+    var pagination = document.getElementById("runs-pagination");
+
+    try {
+        var data = await apiFetch("/experiments?page=" + _expPage + "&limit=" + _expLimit);
+        var items = data.items || [];
+        var total = data.total || 0;
+
+        runsLoading.classList.add("hidden");
+
+        if (items.length === 0 && _expPage === 1) {
+            runsEmpty.classList.remove("hidden");
+            runsTable.classList.add("hidden");
+            pagination.classList.add("hidden");
+            return;
+        }
+
+        runsEmpty.classList.add("hidden");
+        runsTable.classList.remove("hidden");
+        runsBody.innerHTML = "";
+
+        for (var i = 0; i < items.length; i++) {
+            var run = items[i];
+            var m = run.metrics || {};
+            var tr = document.createElement("tr");
+            tr.innerHTML =
+                "<td>" + (run.run_id || "").substring(0, 16) + "</td>" +
+                "<td>" + (run.model_name || "") + "</td>" +
+                "<td>" + (run.created_at || "").substring(0, 19) + "</td>" +
+                "<td>" + _fmtMetric(m.f1 || m.best_f1) + "</td>" +
+                "<td>" + _fmtMetric(m.auc_roc) + "</td>" +
+                "<td>" + _fmtMetric(m.precision) + "</td>" +
+                "<td>" + _fmtMetric(m.recall) + "</td>" +
+                '<td><button class="btn btn-secondary" style="padding:0.2rem 0.5rem;font-size:0.8rem;" ' +
+                'onclick="viewRunDetail(\'' + run.run_id + '\')">Details</button></td>';
+            runsBody.appendChild(tr);
+        }
+
+        // Pagination.
+        var totalPages = Math.ceil(total / _expLimit);
+        if (totalPages > 1) {
+            pagination.classList.remove("hidden");
+            document.getElementById("page-info").textContent =
+                "Page " + _expPage + " of " + totalPages + " (" + total + " runs)";
+            document.getElementById("prev-page").disabled = (_expPage <= 1);
+            document.getElementById("next-page").disabled = (_expPage >= totalPages);
+        } else {
+            pagination.classList.add("hidden");
+        }
+
+    } catch (err) {
+        runsLoading.classList.add("hidden");
+        showAlert("experiments-alert", "Failed to load experiments: " + err.message, "error");
+    }
+}
+
+function _fmtMetric(v) {
+    if (v === null || v === undefined) return "--";
+    return (typeof v === "number") ? v.toFixed(4) : String(v);
+}
+
+async function viewRunDetail(runId) {
+    try {
+        var data = await apiFetch("/evaluate/" + runId);
+        var card = document.getElementById("metrics-card");
+        var content = document.getElementById("metrics-content");
+        card.classList.remove("hidden");
+
+        var html = "<p style='margin-bottom:0.75rem;'>Run: <strong>" + data.run_id +
+            "</strong> | Model: <strong>" + (data.model_name || "N/A") + "</strong></p>";
+        html += "<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>";
+        var metrics = data.metrics || {};
+        var keys = Object.keys(metrics).sort();
+        for (var i = 0; i < keys.length; i++) {
+            var v = metrics[keys[i]];
+            html += "<tr><td>" + keys[i] + "</td><td>" +
+                (v !== null && v !== undefined ? (typeof v === "number" ? v.toFixed(6) : v) : "N/A") +
+                "</td></tr>";
+        }
+        html += "</tbody></table>";
+
+        // Action links.
+        html += '<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
+            '<a href="/api/visualize/' + runId + '?type=timeseries" target="_blank" ' +
+            'class="btn btn-secondary">Time Series Plot</a>' +
+            '<a href="/api/visualize/' + runId + '?type=reconstruction" target="_blank" ' +
+            'class="btn btn-secondary">Reconstruction Plot</a>' +
+            '<button class="btn btn-primary" onclick="showDetectPanel(\'' + runId + '\')">Run Detection</button>' +
+            '</div>';
+
+        content.innerHTML = html;
+        card.scrollIntoView({ behavior: "smooth" });
+    } catch (err) {
+        showAlert("experiments-alert", "Failed to load run details: " + err.message, "error");
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Detect panel (experiments.html — run detection from a trained model)
+// ---------------------------------------------------------------------------
+
+var _detectRunId = "";
+
+async function showDetectPanel(runId) {
+    _detectRunId = runId;
+    var card = document.getElementById("detect-card");
+    if (!card) return;
+    card.classList.remove("hidden");
+    document.getElementById("detect-run-id").textContent = runId;
+    document.getElementById("detect-result").classList.add("hidden");
+    clearAlert("detect-alert");
+
+    // Load datasets into the detect dropdown.
+    var sel = document.getElementById("detect-dataset");
+    sel.innerHTML = '<option value="">Select a dataset...</option>';
+    try {
+        var data = await apiFetch("/data?page=1&limit=200");
+        var items = data.items || [];
+        for (var i = 0; i < items.length; i++) {
+            var ds = items[i];
+            var opt = document.createElement("option");
+            opt.value = ds.dataset_id;
+            var shape = ds.shape
+                ? ds.shape[0] + "x" + ds.shape[1]
+                : ds.rows + "x" + ds.columns;
+            opt.textContent = (ds.name || ds.dataset_id.substring(0, 12)) + " (" + shape + ")";
+            sel.appendChild(opt);
+        }
+    } catch (err) {}
+
+    // Wire up the detect button (remove old listener by replacing element).
+    var btn = document.getElementById("detect-btn");
+    var newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener("click", _runDetection);
+
+    card.scrollIntoView({ behavior: "smooth" });
+}
+
+async function _runDetection() {
+    var datasetId = document.getElementById("detect-dataset").value;
+    if (!datasetId) {
+        showAlert("detect-alert", "Please select a dataset.", "warning");
+        return;
+    }
+    if (!_detectRunId) return;
+
+    var btn = document.getElementById("detect-btn");
+    btn.disabled = true;
+    document.getElementById("detect-spinner").classList.remove("hidden");
+    clearAlert("detect-alert");
+
+    try {
+        var result = await apiFetch("/detect", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                data_path: "data/raw/" + datasetId + ".parquet",
+                model_path: "data/experiments/" + _detectRunId,
+            }),
+        });
+
+        document.getElementById("detect-result").classList.remove("hidden");
+        var tbody = document.getElementById("detect-result-body");
+        var nAnomalies = (result.labels || []).filter(function(l) { return l === 1; }).length;
+        var total = (result.labels || []).length;
+        tbody.innerHTML =
+            "<tr><td>Model</td><td>" + (result.model_name || "N/A") + "</td></tr>" +
+            "<tr><td>Total Samples</td><td>" + total + "</td></tr>" +
+            "<tr><td>Anomalies Detected</td><td>" + nAnomalies + "</td></tr>" +
+            "<tr><td>Anomaly Rate</td><td>" + (total > 0 ? (nAnomalies / total * 100).toFixed(2) + "%" : "N/A") + "</td></tr>" +
+            "<tr><td>Threshold</td><td>" + (result.threshold != null ? result.threshold.toFixed(6) : "N/A") + "</td></tr>";
+
+        showAlert("detect-alert", "Detection complete! " + nAnomalies + " anomalies found in " + total + " samples.", "success");
+    } catch (err) {
+        showAlert("detect-alert", "Detection failed: " + err.message, "error");
+    } finally {
+        btn.disabled = false;
+        document.getElementById("detect-spinner").classList.add("hidden");
+    }
 }
 
 // ---------------------------------------------------------------------------

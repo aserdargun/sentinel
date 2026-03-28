@@ -41,7 +41,7 @@ runtime:
   shap_max_features: 10
 
 llm:
-  model: "nvidia/nemotron-3-nano-4b"
+  model: "nemotron-3-nano:4b"
   ollama_url: "http://localhost:11434"
   timeout_s: 30
 

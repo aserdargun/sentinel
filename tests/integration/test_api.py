@@ -73,14 +73,6 @@ def valid_csv_bytes() -> bytes:
     return "\n".join(rows).encode()
 
 
-@pytest.fixture
-def valid_csv_file(tmp_path: Path, valid_csv_bytes: bytes) -> Path:
-    """Write a valid CSV to a temp file."""
-    p = tmp_path / "test_data.csv"
-    p.write_bytes(valid_csv_bytes)
-    return p
-
-
 # ---------------------------------------------------------------------------
 # Health
 # ---------------------------------------------------------------------------
@@ -454,7 +446,15 @@ class TestExperiments:
 class TestDetectErrors:
     """Tests for POST /api/detect error handling."""
 
-    async def test_detect_missing_data_path_returns_400(
+    async def test_detect_path_traversal_returns_400(self, client: AsyncClient) -> None:
+        body: dict[str, Any] = {
+            "data_path": "../../etc/passwd",
+            "model_path": "data/experiments/run-1",
+        }
+        response = await client.post("/api/detect", json=body)
+        assert response.status_code == 400
+
+    async def test_detect_outside_allowed_dir_returns_400(
         self, client: AsyncClient
     ) -> None:
         body: dict[str, Any] = {
@@ -464,15 +464,15 @@ class TestDetectErrors:
         response = await client.post("/api/detect", json=body)
         assert response.status_code == 400
 
-    async def test_detect_missing_model_path_returns_404(
-        self, client: AsyncClient, valid_csv_file: Path
+    async def test_detect_missing_data_file_returns_400(
+        self, client: AsyncClient
     ) -> None:
         body: dict[str, Any] = {
-            "data_path": str(valid_csv_file),
-            "model_path": "/nonexistent/model_dir",
+            "data_path": "data/raw/nonexistent.csv",
+            "model_path": "data/experiments/run-1",
         }
         response = await client.post("/api/detect", json=body)
-        assert response.status_code == 404
+        assert response.status_code == 400
 
     async def test_detect_empty_body_returns_422(self, client: AsyncClient) -> None:
         response = await client.post("/api/detect", json={})

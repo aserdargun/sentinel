@@ -14,6 +14,7 @@ import typer
 from sentinel.cli.data import data_app
 from sentinel.cli.detect import detect_app
 from sentinel.cli.evaluate import evaluate_app
+from sentinel.cli.export import export_app
 from sentinel.cli.generate import generate_app
 from sentinel.cli.ingest import ingest_app
 from sentinel.cli.mcp_serve import mcp_serve_app
@@ -32,6 +33,7 @@ app = typer.Typer(
 app.add_typer(train_app, name="train")
 app.add_typer(evaluate_app, name="evaluate")
 app.add_typer(detect_app, name="detect")
+app.add_typer(export_app, name="export")
 app.add_typer(ingest_app, name="ingest")
 app.add_typer(generate_app, name="generate")
 app.add_typer(data_app, name="data")

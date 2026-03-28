@@ -53,7 +53,7 @@ def get_prompt_router() -> PromptRouter | None:
 
 def create_mcp_server(
     ollama_url: str = "http://localhost:11434",
-    ollama_model: str = "nvidia/nemotron-3-nano-4b",
+    ollama_model: str = "nemotron-3-nano:4b",
     ollama_timeout: int = 30,
 ) -> FastMCP:
     """Create and configure the Sentinel MCP server.

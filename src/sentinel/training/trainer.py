@@ -24,6 +24,7 @@ from sentinel.data.preprocessors import (
     to_numpy,
 )
 from sentinel.data.validators import separate_labels, validate_dataframe
+from sentinel.tracking.experiment import LocalTracker
 from sentinel.training.evaluator import Evaluator
 
 logger = structlog.get_logger(__name__)
@@ -189,6 +190,33 @@ class Trainer:
 
         duration_s = time.monotonic() - start_time
 
+        # ---- 15. Persist artifacts ----
+        tracker = LocalTracker()
+        run_dir = tracker.base_dir / run_id
+        run_dir.mkdir(parents=True, exist_ok=True)
+
+        # Write meta.json (needed by detect endpoint to resolve model name).
+        tracker._write_json(run_dir / "meta.json", {
+            "run_id": run_id,
+            "model_name": self._config.model,
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+            "status": "completed",
+        })
+
+        # Save config.
+        from dataclasses import asdict
+
+        config_dict = asdict(self._config)
+        config_dict["model"] = self._config.model
+        tracker._write_json(run_dir / "config.json", config_dict)
+
+        # Save metrics.
+        tracker.log_metrics(run_id, metrics)
+
+        # Save model artifacts.
+        model.save(str(run_dir))
+        log.info("artifacts_saved", run_dir=str(run_dir))
+
         result = TrainResult(
             run_id=run_id,
             model_name=self._config.model,
@@ -257,7 +285,13 @@ class Trainer:
             and param.kind in (param.POSITIONAL_OR_KEYWORD, param.KEYWORD_ONLY)
         }
 
-        return {k: v for k, v in self._config.extra.items() if k in valid_params}
+        params = {k: v for k, v in self._config.extra.items() if k in valid_params}
+
+        # Inject config.device if the model constructor accepts it.
+        if "device" in valid_params and "device" not in params:
+            params["device"] = self._config.device
+
+        return params
 
     def _apply_training_mode(
         self,

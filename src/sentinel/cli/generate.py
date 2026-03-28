@@ -45,7 +45,7 @@ def generate(
         "data/raw/synthetic.parquet",
         "--output",
         "-o",
-        help="Output file path (Parquet format).",
+        help="Output file path (.parquet or .csv).",
     ),
 ) -> None:
     """Generate synthetic multivariate time series with anomaly injection.
@@ -89,8 +89,13 @@ def generate(
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Atomic write: temp file then rename.
-    tmp_path = out_path.with_suffix(".parquet.tmp")
-    df.write_parquet(str(tmp_path))
+    # Respect file extension: .csv writes CSV, everything else writes Parquet.
+    is_csv = out_path.suffix.lower() == ".csv"
+    tmp_path = out_path.with_suffix(out_path.suffix + ".tmp")
+    if is_csv:
+        df.write_csv(str(tmp_path))
+    else:
+        df.write_parquet(str(tmp_path))
     os.rename(str(tmp_path), str(out_path))
 
     n_anomalies = int(df.get_column("is_anomaly").sum())

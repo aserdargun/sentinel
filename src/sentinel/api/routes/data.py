@@ -260,6 +260,92 @@ async def preview_dataset(
     return preview.to_dicts()  # type: ignore[return-value]
 
 
+@router.get(
+    "/{dataset_id}/plot",
+    responses={404: {"model": ErrorResponse}},
+)
+async def plot_dataset(
+    dataset_id: str,
+    max_points: int = Query(
+        default=2000, ge=10, le=50000, description="Max data points to return."
+    ),
+    start: str | None = Query(default=None, description="Start timestamp (ISO)."),
+    end: str | None = Query(default=None, description="End timestamp (ISO)."),
+    features: str | None = Query(
+        default=None, description="Comma-separated feature names to include."
+    ),
+) -> dict[str, Any]:
+    """Return time series data for charting.
+
+    Reads the dataset Parquet file and returns rows as a list of dicts
+    suitable for Chart.js.  If the dataset has more rows than
+    ``max_points``, it is downsampled by taking every N-th row (LTTB
+    approximation).
+
+    Args:
+        dataset_id: The UUID dataset identifier.
+        max_points: Maximum number of data points (default 2000).
+        start: Optional start timestamp filter (ISO 8601).
+        end: Optional end timestamp filter (ISO 8601).
+        features: Optional comma-separated feature names to include.
+
+    Returns:
+        Dict with ``rows`` list of dicts and ``total`` original row count.
+    """
+    metadata = _load_metadata()
+    if dataset_id not in metadata:
+        raise HTTPException(status_code=404, detail=f"Dataset not found: {dataset_id}")
+
+    parquet_path = _DATA_DIR / f"{dataset_id}.parquet"
+    if not parquet_path.exists():
+        raise HTTPException(
+            status_code=404, detail=f"Parquet file missing for dataset: {dataset_id}"
+        )
+
+    try:
+        df = pl.read_parquet(parquet_path)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to read dataset: {exc}"
+        ) from exc
+
+    # Apply time window filter if provided.
+    if start is not None and "timestamp" in df.columns:
+        try:
+            df = df.filter(pl.col("timestamp") >= pl.lit(start).str.to_datetime())
+        except Exception:
+            pass  # Ignore invalid start filter.
+
+    if end is not None and "timestamp" in df.columns:
+        try:
+            df = df.filter(pl.col("timestamp") <= pl.lit(end).str.to_datetime())
+        except Exception:
+            pass  # Ignore invalid end filter.
+
+    # Select requested features.
+    if features is not None:
+        requested = [f.strip() for f in features.split(",") if f.strip()]
+        keep_cols = ["timestamp"] if "timestamp" in df.columns else []
+        for col in requested:
+            if col in df.columns and col != "timestamp":
+                keep_cols.append(col)
+        if keep_cols:
+            df = df.select(keep_cols)
+
+    total = len(df)
+
+    # Downsample if necessary (stride-based).
+    if total > max_points:
+        step = max(1, total // max_points)
+        df = df.gather_every(step)
+
+    # Convert timestamps to ISO strings for JSON serialization.
+    if "timestamp" in df.columns:
+        df = df.with_columns(pl.col("timestamp").cast(pl.Utf8).alias("timestamp"))
+
+    return {"rows": df.to_dicts(), "total": total}
+
+
 @router.delete(
     "/{dataset_id}",
     responses={404: {"model": ErrorResponse}},

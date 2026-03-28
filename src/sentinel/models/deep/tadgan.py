@@ -21,11 +21,11 @@ Trained on normal data only (``training_mode: normal_only``).
 from __future__ import annotations
 
 import json
-import logging
 import os
 from typing import Any
 
 import numpy as np
+import structlog
 
 from sentinel.core.base_model import BaseAnomalyDetector
 from sentinel.core.device import resolve_device
@@ -33,7 +33,7 @@ from sentinel.core.exceptions import SentinelError
 from sentinel.core.registry import register_model
 from sentinel.data.preprocessors import create_windows
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 try:
     import torch
@@ -252,7 +252,7 @@ if HAS_TORCH:
             self.batch_size = batch_size
             self.device_str = device
 
-            self._device: torch.device = torch.device(resolve_device(device))
+            self._device: torch.device | None = None
             self._encoder: _Encoder | None = None
             self._generator: _Generator | None = None
             self._critic: _Critic | None = None
@@ -295,12 +295,15 @@ if HAS_TORCH:
                 torch.cuda.manual_seed_all(seed)
 
             self._n_features = n_features
+            self._device = torch.device(resolve_device(self.device_str))
 
             # Create 3-D sliding windows.
             windows = create_windows(X, self.seq_len, stride=1)
             tensor = torch.tensor(windows, dtype=torch.float32)
             dataset = TensorDataset(tensor)
-            loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+            loader = DataLoader(
+                dataset, batch_size=self.batch_size, shuffle=True, num_workers=0
+            )
 
             # Build networks.
             self._encoder = _Encoder(

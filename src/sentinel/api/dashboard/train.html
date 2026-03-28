@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - Train Model</title>
+    <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/ui/" class="navbar-brand">Sentinel</a>
+        <ul class="navbar-nav">
+            <li><a href="/ui/">Dashboard</a></li>
+            <li><a href="/ui/upload.html">Upload</a></li>
+            <li><a href="/ui/explore.html">Explore</a></li>
+            <li><a href="/ui/train.html" class="active">Train</a></li>
+            <li><a href="/ui/experiments.html">Experiments</a></li>
+            <li><a href="/ui/pi.html">PI System</a></li>
+            <li><a href="/ui/prompt.html">Prompt</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Train Model</h1>
+        <div style="color:var(--text-secondary); font-size:0.8rem; margin-bottom:1rem;">
+            Step: <span style="color:var(--text-primary);">Upload</span> &rarr;
+            <span style="color:var(--text-primary);">Explore</span> &rarr;
+            <strong style="color:var(--accent);">Train</strong> &rarr;
+            <span style="color:var(--text-primary);">Experiments</span>
+        </div>
+
+        <div id="train-alert"></div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Submit Training Job</div>
+                <div class="form-group">
+                    <label for="dataset-select">Dataset</label>
+                    <select id="dataset-select" class="form-control">
+                        <option value="">Select a dataset...</option>
+                    </select>
+                    <p style="color:var(--text-secondary); font-size:0.75rem; margin-top:0.25rem;">
+                        <a href="/ui/upload.html" style="color:var(--accent);">Upload a new dataset</a>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="config-path">Model Config</label>
+                    <select id="config-path" class="form-control">
+                        <option value="">Select a model...</option>
+                    </select>
+                </div>
+                <button id="train-btn" class="btn btn-primary">Start Training</button>
+                <span id="train-spinner" class="spinner hidden" style="margin-left:0.75rem;"></span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Available Models</div>
+                <div id="models-info" style="color:var(--text-secondary); font-size:0.875rem;">
+                    Loading...
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Training Jobs</div>
+            <div id="jobs-loading" class="alert alert-info">Loading jobs...</div>
+            <div id="jobs-empty" class="alert alert-warning hidden">No training jobs found.</div>
+            <div class="table-wrapper">
+                <table id="jobs-table" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Model</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Duration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobs-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="job-detail" class="card hidden">
+            <div class="card-title">Job Result</div>
+            <div id="job-detail-content"></div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initTrainPage();
+        });
+    </script>
+</body>
+</html>

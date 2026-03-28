@@ -16,11 +16,33 @@ CONFIGS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "configs"
 
 @dataclass
 class SplitConfig:
-    """Train/val/test split ratios."""
+    """Train/val/test split ratios.
+
+    Validates that each ratio is in ``(0, 1)`` and that all three sum
+    to approximately 1.0 (tolerance of 0.01).
+
+    Raises:
+        ConfigError: If any ratio is out of range or the sum deviates
+            from 1.0 by more than 0.01.
+    """
 
     train: float = 0.70
     val: float = 0.15
     test: float = 0.15
+
+    def __post_init__(self) -> None:
+        for name in ("train", "val", "test"):
+            value = getattr(self, name)
+            if not (0 < value < 1):
+                raise ConfigError(
+                    f"Split ratio '{name}' must be in (0, 1), got {value}"
+                )
+        total = self.train + self.val + self.test
+        if abs(total - 1.0) >= 0.01:
+            raise ConfigError(
+                f"Split ratios must sum to ~1.0, got {total:.4f} "
+                f"(train={self.train}, val={self.val}, test={self.test})"
+            )
 
 
 @dataclass
@@ -50,7 +72,7 @@ class RuntimeConfig:
 class LLMConfig:
     """LLM / Ollama configuration."""
 
-    model: str = "nvidia/nemotron-3-nano-4b"
+    model: str = "nemotron-3-nano:4b"
     ollama_url: str = "http://localhost:11434"
     timeout_s: int = 30
 

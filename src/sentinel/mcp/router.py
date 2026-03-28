@@ -83,9 +83,13 @@ class PromptRouter:
                 "tools_called": [],
             }
 
-        # Build prompt and call LLM
+        # Build prompt and call LLM via chat API for better instruction following
         prompt = tool_selection_prompt(self._tool_schemas, user_message)
-        raw_response = await self._ollama.generate(prompt)
+        messages = [
+            {"role": "system", "content": "You are a JSON-only tool-calling assistant. You MUST respond with valid JSON only. No explanations, no markdown, no extra text."},
+            {"role": "user", "content": prompt},
+        ]
+        raw_response = await self._ollama.chat(messages)
 
         if raw_response is None:
             return {
@@ -245,7 +249,8 @@ def _extract_json(text: str) -> dict[str, Any] | None:
     """Extract a JSON object from text that may contain surrounding prose.
 
     Tries ``json.loads`` on the full text first, then searches for the
-    first ``{...}`` block.
+    first ``{...}`` block.  Also handles bare JSON arrays by wrapping
+    them as ``{"tool_calls": [...]}``.
 
     Args:
         text: Raw text that may contain embedded JSON.
@@ -258,28 +263,46 @@ def _extract_json(text: str) -> dict[str, Any] | None:
         result = json.loads(text)
         if isinstance(result, dict):
             return result
+        # Handle bare arrays: LLM sometimes returns [...] instead of {"tool_calls": [...]}
+        if isinstance(result, list):
+            return {"tool_calls": result}
     except (json.JSONDecodeError, ValueError):
         pass
 
-    # Search for JSON block within text
+    # Search for JSON object block within text
     start = text.find("{")
-    if start == -1:
-        return None
+    if start != -1:
+        depth = 0
+        for i in range(start, len(text)):
+            if text[i] == "{":
+                depth += 1
+            elif text[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        result = json.loads(text[start : i + 1])
+                        if isinstance(result, dict):
+                            return result
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+                    break
 
-    # Find matching closing brace
-    depth = 0
-    for i in range(start, len(text)):
-        if text[i] == "{":
-            depth += 1
-        elif text[i] == "}":
-            depth -= 1
-            if depth == 0:
-                try:
-                    result = json.loads(text[start : i + 1])
-                    if isinstance(result, dict):
-                        return result
-                except (json.JSONDecodeError, ValueError):
-                    pass
-                break
+    # Search for JSON array block within text
+    start = text.find("[")
+    if start != -1:
+        depth = 0
+        for i in range(start, len(text)):
+            if text[i] == "[":
+                depth += 1
+            elif text[i] == "]":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        result = json.loads(text[start : i + 1])
+                        if isinstance(result, list):
+                            return {"tool_calls": result}
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+                    break
 
     return None

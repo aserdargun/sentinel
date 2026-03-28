@@ -118,8 +118,11 @@ if HAS_TORCH:
             self.epochs = epochs
             self.batch_size = batch_size
             self.dropout = dropout
-            self.device = resolve_device(device)
+            self.device_str = device
 
+            # Resolved at fit-time so that resolve_device() sees current
+            # hardware state.
+            self._device: torch.device | None = None
             self._model: _LSTMNetwork | None = None
             self._n_features: int | None = None
             self._is_fitted: bool = False
@@ -155,6 +158,7 @@ if HAS_TORCH:
                 )
 
             self._n_features = n_features
+            self._device = torch.device(resolve_device(self.device_str))
 
             # Build sliding windows: shape (n_windows, seq_len+1, n_features).
             windows = create_windows(X, seq_len=self.seq_len + 1, stride=1)
@@ -166,7 +170,9 @@ if HAS_TORCH:
             targets_t = torch.tensor(targets, dtype=torch.float32)
 
             dataset = TensorDataset(inputs_t, targets_t)
-            loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+            loader = DataLoader(
+                dataset, batch_size=self.batch_size, shuffle=True, num_workers=0
+            )
 
             # Build the network and move to device.
             self._model = _LSTMNetwork(
@@ -175,8 +181,7 @@ if HAS_TORCH:
                 num_layers=self.num_layers,
                 dropout=self.dropout,
             )
-            dev = torch.device(self.device)
-            self._model.to(dev)
+            self._model.to(self._device)
 
             optimizer = torch.optim.Adam(
                 self._model.parameters(), lr=self.learning_rate
@@ -186,8 +191,8 @@ if HAS_TORCH:
             self._model.train()
             for _epoch in range(self.epochs):
                 for batch_x, batch_y in loader:
-                    batch_x = batch_x.to(dev)
-                    batch_y = batch_y.to(dev)
+                    batch_x = batch_x.to(self._device)
+                    batch_y = batch_y.to(self._device)
 
                     preds = self._model(batch_x)
                     loss = criterion(preds, batch_y)
@@ -236,8 +241,7 @@ if HAS_TORCH:
             actuals = windows[:, -1, :]  # (n_windows, n_features)
 
             inputs_t = torch.tensor(inputs, dtype=torch.float32)
-            dev = torch.device(self.device)
-            inputs_t = inputs_t.to(dev)
+            inputs_t = inputs_t.to(self._device)
 
             assert self._model is not None
             self._model.eval()
@@ -282,7 +286,7 @@ if HAS_TORCH:
                 "epochs": self.epochs,
                 "batch_size": self.batch_size,
                 "dropout": self.dropout,
-                "device": self.device,
+                "device": self.device_str,
                 "n_features": self._n_features,
             }
             config_path = os.path.join(path, "config.json")
@@ -325,8 +329,10 @@ if HAS_TORCH:
             self.epochs = int(config["epochs"])
             self.batch_size = int(config["batch_size"])
             self.dropout = float(config["dropout"])
-            self.device = str(config["device"])
+            self.device_str = str(config["device"])
             self._n_features = int(config["n_features"])
+
+            self._device = torch.device(resolve_device(self.device_str))
 
             # Rebuild the network and load weights.
             self._model = _LSTMNetwork(
@@ -335,11 +341,10 @@ if HAS_TORCH:
                 num_layers=self.num_layers,
                 dropout=self.dropout,
             )
-            dev = torch.device(self.device)
             self._model.load_state_dict(
-                torch.load(model_path, map_location=dev, weights_only=True)
+                torch.load(model_path, map_location=self._device, weights_only=True)
             )
-            self._model.to(dev)
+            self._model.to(self._device)
             self._model.eval()
             self._is_fitted = True
 
@@ -359,7 +364,7 @@ if HAS_TORCH:
                 "epochs": self.epochs,
                 "batch_size": self.batch_size,
                 "dropout": self.dropout,
-                "device": self.device,
+                "device": self.device_str,
                 "n_features": self._n_features,
             }
 

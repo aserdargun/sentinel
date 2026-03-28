@@ -20,7 +20,7 @@ class OllamaClient:
 
     Args:
         base_url: Ollama server base URL (e.g. ``http://localhost:11434``).
-        model: Model name to use for generation (e.g. ``nvidia/nemotron-3-nano-4b``).
+        model: Model name to use for generation (e.g. ``nemotron-3-nano:4b``).
         timeout: HTTP request timeout in seconds.
 
     Example::
@@ -33,7 +33,7 @@ class OllamaClient:
     def __init__(
         self,
         base_url: str = "http://localhost:11434",
-        model: str = "nvidia/nemotron-3-nano-4b",
+        model: str = "nemotron-3-nano:4b",
         timeout: int = 30,
     ) -> None:
         self._base_url = base_url.rstrip("/")

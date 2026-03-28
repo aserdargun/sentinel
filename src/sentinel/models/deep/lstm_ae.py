@@ -9,11 +9,11 @@ padded to match the original input length.
 from __future__ import annotations
 
 import json
-import logging
 import os
 from typing import Any
 
 import numpy as np
+import structlog
 
 from sentinel.core.base_model import BaseAnomalyDetector
 from sentinel.core.device import resolve_device
@@ -21,7 +21,7 @@ from sentinel.core.exceptions import SentinelError
 from sentinel.core.registry import register_model
 from sentinel.data.preprocessors import create_windows
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 try:
     import torch
@@ -206,8 +206,11 @@ if HAS_TORCH:
             self.learning_rate = learning_rate
             self.epochs = epochs
             self.batch_size = batch_size
-            self.device = resolve_device(device)
+            self.device_str = device
 
+            # Resolved at fit-time so that resolve_device() sees current
+            # hardware state.
+            self._device: torch.device | None = None
             self._model: _LSTMAutoencoder | None = None
             self._n_features: int | None = None
             self._is_fitted: bool = False
@@ -242,11 +245,15 @@ if HAS_TORCH:
 
             self._n_features = n_features
 
+            self._device = torch.device(resolve_device(self.device_str))
+
             # Create 3-D sliding windows.
             windows = create_windows(X, self.seq_len, stride=1)
             tensor = torch.tensor(windows, dtype=torch.float32)
             dataset = TensorDataset(tensor)
-            loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+            loader = DataLoader(
+                dataset, batch_size=self.batch_size, shuffle=True, num_workers=0
+            )
 
             # Build model and move to device.
             self._model = _LSTMAutoencoder(
@@ -256,8 +263,7 @@ if HAS_TORCH:
                 latent_dim=self.latent_dim,
                 seq_len=self.seq_len,
             )
-            dev = torch.device(self.device)
-            self._model.to(dev)
+            self._model.to(self._device)
 
             optimiser = torch.optim.Adam(
                 self._model.parameters(), lr=self.learning_rate
@@ -270,7 +276,7 @@ if HAS_TORCH:
                 epoch_loss = 0.0
                 n_batches = 0
                 for (batch,) in loader:
-                    batch = batch.to(dev)
+                    batch = batch.to(self._device)
                     reconstructed = self._model(batch)
                     loss = criterion(reconstructed, batch)
 
@@ -325,8 +331,7 @@ if HAS_TORCH:
 
             windows = create_windows(X, self.seq_len, stride=1)
             tensor = torch.tensor(windows, dtype=torch.float32)
-            dev = torch.device(self.device)
-            tensor = tensor.to(dev)
+            tensor = tensor.to(self._device)
 
             assert self._model is not None
             self._model.eval()
@@ -367,7 +372,7 @@ if HAS_TORCH:
                 "learning_rate": self.learning_rate,
                 "epochs": self.epochs,
                 "batch_size": self.batch_size,
-                "device": self.device,
+                "device": self.device_str,
                 "n_features": self._n_features,
             }
             config_path = os.path.join(path, "config.json")
@@ -413,8 +418,10 @@ if HAS_TORCH:
             self.learning_rate = float(config["learning_rate"])
             self.epochs = int(config["epochs"])
             self.batch_size = int(config["batch_size"])
-            self.device = str(config["device"])
+            self.device_str = str(config["device"])
             self._n_features = int(config["n_features"])
+
+            self._device = torch.device(resolve_device(self.device_str))
 
             # Rebuild architecture and load weights.
             self._model = _LSTMAutoencoder(
@@ -424,11 +431,10 @@ if HAS_TORCH:
                 latent_dim=self.latent_dim,
                 seq_len=self.seq_len,
             )
-            dev = torch.device(self.device)
             self._model.load_state_dict(
-                torch.load(model_path, map_location=dev, weights_only=True)
+                torch.load(model_path, map_location=self._device, weights_only=True)
             )
-            self._model.to(dev)
+            self._model.to(self._device)
             self._model.eval()
             self._is_fitted = True
 
@@ -448,7 +454,7 @@ if HAS_TORCH:
                 "learning_rate": self.learning_rate,
                 "epochs": self.epochs,
                 "batch_size": self.batch_size,
-                "device": self.device,
+                "device": self.device_str,
                 "n_features": self._n_features,
             }
 

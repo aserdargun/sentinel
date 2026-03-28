@@ -14,6 +14,8 @@
             <li><a href="/ui/">Dashboard</a></li>
             <li><a href="/ui/upload.html">Upload</a></li>
             <li><a href="/ui/explore.html" class="active">Explore</a></li>
+            <li><a href="/ui/train.html">Train</a></li>
+            <li><a href="/ui/experiments.html">Experiments</a></li>
             <li><a href="/ui/pi.html">PI System</a></li>
             <li><a href="/ui/prompt.html">Prompt</a></li>
         </ul>
@@ -21,6 +23,12 @@
 
     <div class="container">
         <h1 class="page-title">Explore Dataset</h1>
+        <div style="color:var(--text-secondary); font-size:0.8rem; margin-bottom:1rem;">
+            Step: <span style="color:var(--text-primary);">Upload</span> &rarr;
+            <strong style="color:var(--accent);">Explore</strong> &rarr;
+            <span style="color:var(--text-primary);">Train</span> &rarr;
+            <span style="color:var(--text-primary);">Experiments</span>
+        </div>
 
         <div id="explore-alert"></div>
 
@@ -51,6 +59,9 @@
             <div style="margin-top:0.75rem;">
                 <span style="color:var(--text-secondary); font-size:0.8rem;">Features</span>
                 <p id="info-features" style="font-weight:500;"></p>
+            </div>
+            <div style="margin-top:1rem;">
+                <a id="train-link" href="#" class="btn btn-primary">Train with this dataset</a>
             </div>
         </div>
 

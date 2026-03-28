@@ -9,19 +9,20 @@ it is excluded and the remaining weights are renormalised.
 
 from __future__ import annotations
 
+import inspect
 import json
-import logging
 import os
 from typing import Any
 
 import joblib
 import numpy as np
+import structlog
 
 from sentinel.core.base_model import BaseAnomalyDetector
 from sentinel.core.exceptions import ConfigError, SentinelError
 from sentinel.core.registry import get_model_class, register_model
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Valid combination strategies.
 VALID_STRATEGIES = ("weighted_average", "majority_voting", "stacking")
@@ -117,6 +118,7 @@ class HybridEnsemble(BaseAnomalyDetector):
         weights: list[float] | None = None,
         strategy: str = "weighted_average",
         voting_threshold: float = DEFAULT_VOTING_THRESHOLD,
+        device: str = "auto",
     ) -> None:
         if sub_models is None:
             sub_models = ["zscore", "isolation_forest"]
@@ -139,6 +141,7 @@ class HybridEnsemble(BaseAnomalyDetector):
         self.weights: list[float] = list(weights)
         self.strategy: str = strategy
         self.voting_threshold: float = voting_threshold
+        self.device_str: str = device
 
         # Populated during fit().
         self._sub_model_instances: list[BaseAnomalyDetector] = []
@@ -186,7 +189,12 @@ class HybridEnsemble(BaseAnomalyDetector):
         for name in self.sub_model_names:
             try:
                 cls = get_model_class(name)
-                instance = cls()
+                # Pass device to sub-model if its constructor accepts it.
+                sig = inspect.signature(cls.__init__)
+                sub_params: dict[str, Any] = {}
+                if "device" in sig.parameters:
+                    sub_params["device"] = self.device_str
+                instance = cls(**sub_params)
                 instance.fit(X, **kwargs)
                 # Score the training data to capture min/max for normalisation.
                 raw_scores = instance.score(X)
@@ -301,6 +309,7 @@ class HybridEnsemble(BaseAnomalyDetector):
             "weights": self.weights,
             "strategy": self.strategy,
             "voting_threshold": self.voting_threshold,
+            "device": self.device_str,
             "n_features": self._n_features,
             "n_active_models": len(self._sub_model_instances),
         }
@@ -352,6 +361,7 @@ class HybridEnsemble(BaseAnomalyDetector):
         self.weights = config["weights"]
         self.strategy = config["strategy"]
         self.voting_threshold = config.get("voting_threshold", DEFAULT_VOTING_THRESHOLD)
+        self.device_str = config.get("device", "auto")
         self._n_features = config.get("n_features")
         n_active = config.get("n_active_models", len(self.sub_model_names))
 
@@ -406,6 +416,7 @@ class HybridEnsemble(BaseAnomalyDetector):
             "weights": self.weights,
             "strategy": self.strategy,
             "voting_threshold": self.voting_threshold,
+            "device": self.device_str,
             "n_features": self._n_features,
         }
 

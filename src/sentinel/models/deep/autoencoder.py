@@ -173,7 +173,9 @@ if HAS_TORCH:
             # Data loader.
             tensor_x = torch.tensor(X, dtype=torch.float32)
             dataset = TensorDataset(tensor_x)
-            loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+            loader = DataLoader(
+                dataset, batch_size=self.batch_size, shuffle=True, num_workers=0
+            )
 
             # Training loop.
             criterion = nn.MSELoss()

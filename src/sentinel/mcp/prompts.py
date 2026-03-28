@@ -2,7 +2,7 @@
 
 Each function builds a structured prompt string for a specific use case.
 Templates are designed for the Ollama-hosted model configured in
-``base.yaml`` (default ``nvidia/nemotron-3-nano-4b``).
+``base.yaml`` (default ``nemotron-3-nano:4b``).
 """
 
 from __future__ import annotations
@@ -110,29 +110,17 @@ def tool_selection_prompt(
         params = tool.get("parameters", {})
         tools_block += f"\n### {name}\n{desc}\nParameters: {params}\n"
 
+    tool_names = [t.get("name", "") for t in available_tools]
+
     return (
-        "You are a tool-calling assistant for the "
-        "Sentinel anomaly detection platform.\n\n"
-        "The user has sent a request. Select the "
-        "appropriate tool(s) to fulfil it and "
-        "provide the required parameters.\n\n"
-        f"## Available Tools\n{tools_block}\n\n"
-        f"## User Request\n{user_message}\n\n"
-        "Respond ONLY with valid JSON in this "
-        "exact format:\n"
-        "{\n"
-        '  "tool_calls": [\n'
-        "    {\n"
-        '      "tool": "<tool_name>",\n'
-        '      "parameters": {<key>: <value>}\n'
-        "    }\n"
-        "  ]\n"
-        "}\n\n"
-        "If no tool is appropriate, respond with:\n"
-        "{\n"
-        '  "tool_calls": [],\n'
-        '  "message": "<explain why no tool matches>"\n'
-        "}"
+        "Select tool(s) from this list to fulfil the user request.\n\n"
+        f"Valid tool names: {', '.join(tool_names)}\n\n"
+        f"{tools_block}\n\n"
+        f"User request: {user_message}\n\n"
+        "Respond with ONLY this JSON (no other text):\n"
+        '{"tool_calls": [{"tool": "EXACT_TOOL_NAME", "parameters": {}}]}\n\n'
+        "Example: to list models, respond:\n"
+        '{"tool_calls": [{"tool": "sentinel_list_models", "parameters": {}}]}'
     )
 
 
